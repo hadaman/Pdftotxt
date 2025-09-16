@@ -1,30 +1,28 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hindi PDF to Text OCR</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hindi PDF to Text OCR</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>हिंदी PDF को टेक्स्ट में बदलें</h1>
+<div class="container">
+    <h1>हिंदी PDF को टेक्स्ट में बदलें</h1>
+    <input type="file" id="pdf-upload" accept=".pdf">
+    <button id="convert-btn">Convert to Text</button>
 
-        <input type="file" id="pdf-upload" accept=".pdf">
-        <button id="convert-btn">Convert to Text</button>
-
-        <div id="progress-container">
-            <p id="progress-text">Progress: 0%</p>
-        </div>
-
-        <textarea id="output" placeholder="यहाँ आपका हिंदी टेक्स्ट दिखाई देगा..." rows="15"></textarea>
-        <button id="copy-btn">Copy Text</button>
-        <button id="download-btn">Download as TXT</button>
+    <div id="progress-container">
+        <p id="progress-text">Progress: 0%</p>
     </div>
 
-    <!-- Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
-    <script src="script.js"></script>
+    <textarea id="output" placeholder="यहाँ आपका हिंदी टेक्स्ट दिखाई देगा..." rows="15"></textarea>
+    <button id="copy-btn">Copy Text</button>
+    <button id="download-btn">Download as TXT</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
