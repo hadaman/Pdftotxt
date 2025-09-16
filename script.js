@@ -5,6 +5,34 @@ const progressText = document.getElementById('progress-text');
 const copyBtn = document.getElementById('copy-btn');
 const downloadBtn = document.getElementById('download-btn');
 
+// Dictionary-based post-correction
+function fixCommonOCR(text) {
+    const corrections = {
+        'भिवhयत': 'भविष्यत',
+        'िGयाएँ': 'क्रियाएँ',
+        'िGया': 'क्रिया',
+        // Add more corrections here
+    };
+    for (let wrong in corrections) {
+        let regex = new RegExp(wrong, 'g');
+        text = text.replace(regex, corrections[wrong]);
+    }
+    return text;
+}
+
+// Convert canvas to black-white image for better OCR
+function preprocessCanvas(canvas) {
+    const ctx = canvas.getContext('2d');
+    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < imgData.data.length; i += 4) {
+        let avg = (imgData.data[i] + imgData.data[i+1] + imgData.data[i+2])/3;
+        let val = avg > 128 ? 255 : 0; // threshold
+        imgData.data[i] = imgData.data[i+1] = imgData.data[i+2] = val;
+    }
+    ctx.putImageData(imgData, 0, 0);
+    return canvas;
+}
+
 convertBtn.addEventListener('click', async () => {
     const file = pdfUpload.files[0];
     if (!file) { alert('कृपया PDF फाइल अपलोड करें।'); return; }
@@ -20,14 +48,16 @@ convertBtn.addEventListener('click', async () => {
 
         for (let i = 1; i <= pdf.numPages; i++) {
             const page = await pdf.getPage(i);
-            const viewport = page.getViewport({ scale: 2 });
+            const viewport = page.getViewport({ scale: 3 }); // high res
 
             const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
+            const ctx = canvas.getContext('2d');
             canvas.width = viewport.width;
             canvas.height = viewport.height;
 
-            await page.render({ canvasContext: context, viewport: viewport }).promise;
+            await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+            preprocessCanvas(canvas); // black-white
 
             const { data: { text } } = await Tesseract.recognize(canvas, 'hin', {
                 logger: m => {
@@ -37,7 +67,7 @@ convertBtn.addEventListener('click', async () => {
                 }
             });
 
-            fullText += text + '\n';
+            fullText += fixCommonOCR(text) + '\n';
         }
 
         output.value = fullText;
